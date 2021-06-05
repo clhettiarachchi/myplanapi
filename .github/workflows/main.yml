@@ -1,4 +1,4 @@
-on: 
+on:
   push:
     branches:
       - main
@@ -8,13 +8,23 @@ jobs:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
-    
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
-      with:
-        server: server239.web-hosting.com
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /myplanapi.betaapps.dev/
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Upload public folder
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: server239.web-hosting.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public
+          server-dir: /myplanapi.betaapps.dev/
+
+      - name: 📂 Upload project files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: server239.web-hosting.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          exclude: public/
+          server-dir: /myplanapi/
