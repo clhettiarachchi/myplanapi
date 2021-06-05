@@ -14,6 +14,8 @@ use Carbon\Carbon;
 
 class TaskController extends Controller
 {
+    public string $LOCAL_TIMEZONE = '+05:30';
+
     /**
      * Display a listing of the resource.
      *
@@ -24,11 +26,11 @@ class TaskController extends Controller
         $active_user = Auth::user();
         $tasks = Task::where('user_id', $active_user->id)->get();
 
-        if (count($tasks)) {
+        if (count($tasks) > 0) {
             return response(['status' => true, 'data' => TaskResource::collection($tasks)]);
         }
         else {
-            return response(['status' => false, 'error' => 'Not found', 'message' => 'There are no tasks'], 404);
+            return response(['status' => false, 'message' => 'No tasks found'], 404);
         }
     }
 
@@ -83,7 +85,7 @@ class TaskController extends Controller
         }
 
         else {
-            return response(['status' => false, 'error' => 'Not found or forbidden'], 400);
+            return response(['status' => false, 'message' => 'Not found or forbidden'], 403);
         }
     }
 
@@ -124,16 +126,20 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $active_user = Auth::user();
         $task = Task::where('user_id', $active_user->id)->find($id);
 
-        if ($task) {
-            return response(['status' => true, 'message' => 'Task was deleted'], 204);
+        if (!$task) {
+            return response(['status' => false, 'message' => 'Not found or forbidden'], 403);
+        }
+
+        if ($task->delete() > 0) {
+            return response(['status' => true, 'message' => 'Task was deleted']);
         }
         else {
-            return response(['status' => false, 'error' => 'Not found or forbidden', 'message' => 'Error in deleting the task'], 400);
+            return response(['status' => false, 'message' => 'Error in deleting the task'], 400);
         }
     }
 
@@ -149,14 +155,14 @@ class TaskController extends Controller
         $tasks = Task::where([
             'user_id' => $active_user->id,
             ])
-            ->whereDate('due_date', Carbon::today())
+            ->whereDate('due_date', Carbon::today($this->LOCAL_TIMEZONE))
             ->get();
 
-            if ($tasks) {
+            if (count($tasks) > 0) {
                 return response(['status' => true, 'data' => TaskResource::collection($tasks)], 200);
             }
             else {
-                return response(['status' => false, 'error' => 'Not found', 'message' => 'There are no tasks'], 404);
+                return response(['status' => false, 'message' => 'No tasks found'], 404);
             }
         
     }
@@ -172,14 +178,14 @@ class TaskController extends Controller
         $tasks = Task::where([
             'user_id' => $active_user->id,
             ])
-            ->whereDate('due_date', Carbon::tomorrow())
+            ->whereDate('due_date', Carbon::tomorrow($this->LOCAL_TIMEZONE))
             ->get();
 
-            if ($tasks) {
+            if (count($tasks) > 0) {
                 return response(['status' => true, 'data' => TaskResource::collection($tasks)], 200);
             }
             else {
-                return response(['status' => false, 'error' => 'Not found', 'message' => 'There are no tasks'], 404);
+                return response(['status' => false, 'message' => 'No tasks found'], 404);
             }
     }
 
@@ -194,14 +200,14 @@ class TaskController extends Controller
         $tasks = Task::where([
             'user_id' => $active_user->id,
             ])
-            ->whereDate('due_date', '>', Carbon::tomorrow())
+            ->whereDate('due_date', '>', Carbon::tomorrow($this->LOCAL_TIMEZONE))
             ->get();
 
-            if ($tasks) {
+            if (count($tasks)) {
                 return response(['status' => true, 'data' => TaskResource::collection($tasks)], 200);
             }
             else {
-                return response(['status' => false, 'error' => 'Not found', 'message' => 'There are no tasks'], 404);
+                return response(['status' => false, 'message' => 'No tasks found'], 404);
             }
     }
 
@@ -215,11 +221,11 @@ class TaskController extends Controller
         $date = $request->date;
         $tasks = Task::where('due_date', new Carbon($date))->get();
 
-        if ($tasks) {
+        if (count($tasks) > 0) {
             return response(['status' => true, 'data' => TaskResource::collection($tasks)], 200);
         }
         else {
-            return response(['status' => false, 'error' => 'Not found', 'message' => 'There are no tasks'], 404);
+            return response(['status' => false, 'message' => 'No tasks found'], 404);
         }
     }
 }
