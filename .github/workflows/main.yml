@@ -17,7 +17,7 @@ jobs:
           server: server239.web-hosting.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public
+          local-dir: ./public/
           server-dir: /myplanapi.betaapps.dev/
 
       - name: 📂 Upload project files
