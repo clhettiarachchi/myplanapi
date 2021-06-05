@@ -11,15 +11,15 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: Upload public folder
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
-        with:
-          server: server239.web-hosting.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public/
-          exclude: index.php
-          server-dir: /myplanapi.betaapps.dev/
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Install dependencies and optimize
+        run: |
+          composer install --optimize-autoloader --no-dev
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
 
       - name: 📂 Upload project files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
@@ -29,3 +29,13 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: public/
           server-dir: /myplanapi/
+
+      - name: Upload public folder
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: server239.web-hosting.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public/
+          exclude: index.php
+          server-dir: /myplanapi.betaapps.dev/
