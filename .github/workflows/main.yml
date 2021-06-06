@@ -16,13 +16,10 @@ jobs:
 
       - name: Install dependencies and optimize
         run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          php artisan route:clear
+          composer install --no-ansi --no-interaction --no-progress --prefer-dist
           php artisan config:clear
           php artisan cache:clear
           php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
         env: 
           APP_ENV: production
           APP_URL: ${{ secrets.PRODUCTION_URL }}
