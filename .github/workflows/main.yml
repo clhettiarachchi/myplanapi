@@ -21,6 +21,7 @@ jobs:
           php artisan config:cache
         env: 
           APP_ENV: production
+          APP_DEBUG: false
           APP_URL: ${{ secrets.PRODUCTION_URL }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
