@@ -30,6 +30,8 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/tasks/after-tomorrow', [TaskController::class, 'getTasksAfterTomorrow']);
     Route::post('/tasks/by-date', [TaskController::class, 'getTasksByDate']);
 
+    Route::put('/tasks/toggle/{id}', [TaskController::class, 'toggleTask']);
+
     Route::get('/tasks', [TaskController::class, 'index']);
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::get('/tasks/{id}', [TaskController::class, 'show']);

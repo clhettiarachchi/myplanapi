@@ -228,4 +228,19 @@ class TaskController extends Controller
             return response(['status' => false, 'message' => 'No tasks found'], 404);
         }
     }
+
+    public function toggleTask(int $id) {
+        $active_user = Auth::user();
+        $task = Task::where('user_id', $active_user->id)->find($id);
+
+        if(!$task) {
+            return response(['status' => false, 'message' => 'Not found or Forbidden'], 403);
+        }
+
+        $completed = $task->completed;
+        $task->completed = !$completed;
+        $task->save();
+
+        return response(['status' => true, 'data' => new TaskResource($task), 'message' => 'Task status updated successfully'], 200);
+    }
 }
