@@ -11,8 +11,8 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      # - name: Copy .env
-      #   run: php -r "file_exists('.env') || copy('.env.production', '.env');"
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Install dependencies and optimize
         run: |
