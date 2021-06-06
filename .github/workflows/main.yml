@@ -11,8 +11,8 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.production', '.env');"
+      # - name: Copy .env
+      #   run: php -r "file_exists('.env') || copy('.env.production', '.env');"
 
       - name: Install dependencies and optimize
         run: |
@@ -20,6 +20,12 @@ jobs:
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
+        env: 
+          APP_ENV: production
+          APP_URL: ${{ secrets.PRODUCTION_URL }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Generate key
         run: php artisan key:generate
@@ -33,7 +39,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           exclude: public/
-          server-dir: /myplanapi/
+          server-dir: ${{ secrets.APP_FOLDER_PATH }}
 
       - name: Upload public folder
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
@@ -43,4 +49,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public/
           exclude: index.php
-          server-dir: /myplanapi.betaapps.dev/
+          server-dir: ${{ secrets.APP_PUBLIC_FOLDER_PATH }}
