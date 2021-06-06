@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class TaskController extends Controller
 {
-    public string $LOCAL_TIMEZONE = '+05:30';
+    public $LOCAL_TIMEZONE = '+05:30';
 
     /**
      * Display a listing of the resource.
